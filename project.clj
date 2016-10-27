@@ -1,9 +1,10 @@
-(defproject event-data-twitter-compliance-logger "0.1.1"
+(defproject event-data-twitter-compliance-logger "0.1.2"
   :description "Event Data Twitter Compliance Stream Logger"
   :url "http://eventdata.crossref.org"
   :license {:name "The MIT License (MIT)"
             :url "https://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/core.async "0.2.395"]
                  [yogthos/config "0.8"]
                  [org.clojure/tools.logging "0.3.1"]
                  [org.clojure/tools.nrepl "0.2.12"]

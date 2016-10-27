@@ -34,8 +34,7 @@ public class RotatingFileWriter {
 
   public BufferedWriter getWriter() throws IOException {
     if (this.lines >= MAX_LINES) {
-      this.rotateCallback.invoke(this.file);
-      this.writer.close();
+      this.close();
       this.lines = 0;
 
       this.file = this.newFile();
@@ -51,6 +50,10 @@ public class RotatingFileWriter {
     if (this.writer != null) {
       this.writer.close();
       this.writer = null;
+    }
+
+    if (this.file != null) {
+      this.rotateCallback.invoke(this.file);
     }
   }
 }
