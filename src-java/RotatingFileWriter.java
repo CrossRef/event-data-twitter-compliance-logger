@@ -10,7 +10,8 @@ import java.io.IOException;
 // Provide a Writer interface for writing files. The filename is rotated and a callback (which should be asynchronous) is made when the rotation happens.
 // Not threadsafe.
 public class RotatingFileWriter {
-  private static long MAX_LINES = 1000000;
+  // 2 million lines = 300 MB
+  private static long MAX_LINES = 2000000;
   private long lines = 0;
   private BufferedWriter writer;
   private String basePath;
