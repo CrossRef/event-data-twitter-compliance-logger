@@ -1,4 +1,4 @@
-(defproject event-data-twitter-compliance-logger "0.1.3"
+(defproject event-data-twitter-compliance-logger "0.1.4"
   :description "Event Data Twitter Compliance Stream Logger"
   :url "http://eventdata.crossref.org"
   :license {:name "The MIT License (MIT)"
@@ -11,7 +11,7 @@
                  [org.clojure/tools.nrepl "0.2.12"]
                  [robert/bruce "0.8.0"]
                  [event-data-common "0.1.17"]
-                 [clj-http "2.3.0"]
+                 [clj-http "3.4.1"]
                  [org.clojure/data.json "0.2.6"]
                  [spootnik/signal "0.2.1"]]
   :main ^:skip-aot event-data-twitter-compliance-logger.core

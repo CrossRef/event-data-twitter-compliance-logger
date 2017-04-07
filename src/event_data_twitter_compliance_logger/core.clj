@@ -65,7 +65,8 @@
                                (>!! user-id-channel user-id)))
                              (recur xs)))))))
     (catch Exception ex (do
-      (log/info (.getMessage ex))))))
+      (log/info (.getMessage ex))
+      (.printStackTrace ex)))))
 
 (defn run-loop
   [tweet-id-channel user-id-channel url]
