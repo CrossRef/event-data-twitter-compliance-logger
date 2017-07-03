@@ -13,13 +13,16 @@ To test shutdown hooks, be sure to make Docker give the process enough time to t
 
 The following config keys are required:
 
- - REDIS_HOST
- - REDIS_PORT
- - REDIS_DB
- - GNIP_USERNAME
- - GNIP_PASSWORD
- - COMPLIANCE_URL
- - S3_KEY
- - S3_SECRET
- - S3_BUCKET_NAME
- - S3_REGION_NAME
+ - TWITTER_COMPLIANCE_S3_BUCKET_NAME
+ - TWITTER_COMPLIANCE_S3_REGION_NAME
+ - TWITTER_COMPLIANCE_S3_KEY
+ - TWITTER_COMPLIANCE_S3_SECRET
+ - TWITTER_GNIP_COMPLIANCE_URL
+ - TWITTER_GNIP_PASSWORD
+ - TWITTER_GNIP_USERNAME
+
+ ## License
+
+Copyright © Crossref
+
+Distributed under the The MIT License (MIT).

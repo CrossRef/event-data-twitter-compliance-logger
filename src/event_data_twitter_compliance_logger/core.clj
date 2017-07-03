@@ -16,6 +16,9 @@
   (:import [org.apache.commons.codec.digest DigestUtils])
   (:gen-class))
 
+; TODO CONFIG
+(def query-api-endpoint "https://query-api.eventdata.crossref.org")
+
 ; http://support.gnip.com/apis/compliance_firehose2.0/api_reference.html
 (def num-partitions 8)
 (def partitions (map str (range 1 (inc num-partitions))))
@@ -31,7 +34,7 @@
    On exception, log and exit (allowing it to be restarted)"
   (try
     (let [response (client/get url
-                    {:as :stream :basic-auth [(:gnip-username env) (:gnip-password env)]})
+                    {:as :stream :basic-auth [(:twitter-gnip-username env) (:twitter-gnip-password env)]})
           stream (:body response)
           lines (line-seq (io/reader stream))]
         (loop [lines lines]
@@ -78,10 +81,13 @@
     (Thread/sleep timeout-delay)
     (recur timeout-delay)))
 
-(def tweet-partition-size 1000000) ; 1000000
+(def tweet-partition-size 1000000)
 (def user-partition-size 10000)
 
-(def store (delay (s3/build (:s3-key env) (:s3-secret env) (:s3-region-name env) (:s3-bucket-name env))))
+(def store (delay (s3/build (:twitter-compliance-s3-key env)
+                            (:twitter-compliance-s3-secret env)
+                            (:twitter-compliance-s3-region-name env)
+                            (:twitter-compliance-s3-bucket-name env))))
 
 (def tweet-prefix "twitter/tweet-deletions/")
 (def user-prefix "twitter/user-deletions/")
@@ -95,10 +101,11 @@
     (close! thread-channel))
   (log/info "Closed all channels."))
 
-(defn -main
-  [& args]
-  (log/info "Starting...")
-  (let [urls (map #(str (:compliance-url env) "?partition=" %) partitions)
+(defn run-ingest
+  "Run and ingest all data."
+  []
+  (log/info "Starting ingestion...")
+  (let [urls (map #(str (:twitter-gnip-compliance-url env) "?partition=" %) partitions)
         tweet-id-channel (chan (buffer 100000) (partition-all tweet-partition-size))
         user-id-channel (chan (buffer 100000) (partition-all user-partition-size))
         thread-channels (map #(thread 
@@ -135,7 +142,7 @@
       ; The partition-all transducer means that these come in chunks. Last time round, chunk will be shorter.
       (if-let [item (<! tweet-id-channel)]
         (let [storage-key (str tweet-prefix (str (clj-time/now)))]
-          (log/info "Saving Tweet ID chunk size" (count item) "at" storage-key "to" (:s3-bucket-name env))
+          (log/info "Saving Tweet ID chunk size" (count item) "at" storage-key "to" (:twitter-compliance-s3-bucket-name env))
           (store/set-string @store storage-key (json/write-str item))
           (log/info "Saved Tweet ID chunk.")
           (recur))
@@ -144,7 +151,7 @@
     (go-loop []
       (if-let [item (<! user-id-channel)]
         (let [storage-key (str user-prefix (str (clj-time/now)))]
-          (log/info "Saving User ID chunk size" (count item) "at" storage-key "to" (:s3-bucket-name env))
+          (log/info "Saving User ID chunk size" (count item) "at" storage-key "to" (:twitter-compliance-s3-bucket-name-name env))
           (store/set-string @store storage-key (json/write-str item))
           (log/info "Saved User ID chunk.")
           (recur))
@@ -158,4 +165,8 @@
 
     (log/info "Graceful exit.")))
 
-  
+
+(defn -main
+  [& args]
+  (run-ingest))
+

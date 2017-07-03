@@ -1,24 +1,17 @@
 version: '2'
 services:
-  redis:
-    image: redis
 
   compliance:
     build: .
     volumes:
      - ./:/usr/src/app
      - ./.m2-cache:/root/.m2
-    depends_on:
-     - redis
     environment:
-     - REDIS_HOST=redis
-     - REDIS_PORT=6379
-     - REDIS_DB=0
-     - GNIP_USERNAME=${GNIP_USERNAME}
-     - GNIP_PASSWORD=${GNIP_PASSWORD}
-     - COMPLIANCE_URL=${COMPLIANCE_URL}
-     - S3_KEY=${S3_KEY}
-     - S3_SECRET=${S3_SECRET}
-     - S3_BUCKET_NAME=${S3_BUCKET_NAME}
-     - S3_REGION_NAME=${S3_REGION_NAME}
-    command: "lein run"
+     - TWITTER_GNIP_USERNAME=${GNIP_USERNAME}
+     - TWITTER_GNIP_PASSWORD=${GNIP_PASSWORD}
+     - TWITTER_COMPLIANCE_URL=${COMPLIANCE_URL}
+     - TWITTER_COMPLIANCE_S3_KEY=${S3_KEY}
+     - TWITTER_COMPLIANCE_S3_SECRET=${S3_SECRET}
+     - TWITTER_COMPLIANCE_S3_BUCKET_NAME=${S3_BUCKET_NAME}
+     - TWITTER_COMPLIANCE_S3_REGION_NAME=${S3_REGION_NAME}
+    command: "lein trampoline run"
